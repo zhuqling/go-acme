@@ -195,23 +195,6 @@ func (a *ACME) http01(domain, uri, token string) error {
 	a.keyAuth[token] = keyAuth
 	a.rwmutex.Unlock()
 
-	// verify that the key auth for the token can be fetched
-	url := "http://" + domain + ACMEChallengePathPrefix + token
-	rsp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	if rsp.StatusCode != 200 {
-		return fmt.Errorf("failed to fetch key authorization at %s", url)
-	}
-	b, err := ioutil.ReadAll(rsp.Body)
-	if err != nil {
-		return err
-	}
-	if bytes.Equal(b, []byte(keyAuth)) != true {
-		return fmt.Errorf("incorrect key authorization at %s", url)
-	}
-
 	// ask the ACME server to start challenge validation
 	payload, err := json.Marshal(map[string]string{
 		"resource":         "challenge",
@@ -220,7 +203,7 @@ func (a *ACME) http01(domain, uri, token string) error {
 	if err != nil {
 		return err
 	}
-	rsp, err = a.do(uri, payload)
+	rsp, err := a.do(uri, payload)
 	if err != nil {
 		return err
 	}
