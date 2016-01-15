@@ -42,12 +42,13 @@ run
 
 ```sh
 openssl genrsa 4096 > account.key
-acme -addr 127.0.0.1:81 -key account.key -domains example.com,www.example.com > chain.pem
+acme -addr 127.0.0.1:81 -key account.key -domains example.com,www.example.com -keyFile privateKey.pem -certFile chain.pem
 ```
 
-and wait for the domain key, domain certifcate, and issuer certificate to be put
-into `chain.pem` file.
-
+```nginx
+ssl_certificate      chain.pem;
+ssl_certificate_key  privateKey.pem;
+```
 
 If you want to run `go-acme` on another host, you need to use SSH to forward
 requests to port 81 on the server to the one running `go-acme`.
