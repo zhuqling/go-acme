@@ -24,6 +24,9 @@ var cfg struct {
 	Domains string
 	API     string
 	Bits    int
+
+	outKeyFile    string
+	outCertFile    string
 }
 
 func init() {
@@ -33,6 +36,8 @@ func init() {
 	flag.StringVar(&cfg.Domains, "domains", "", "comma-separated list of up to 100 domain names")
 	flag.StringVar(&cfg.API, "api", LetsEncryptProduction, "ACME API URL")
 	flag.IntVar(&cfg.Bits, "bit", 2048, "domain key length")
+	flag.IntVar(&cfg.outKeyFile, "keyFile", "privateKey.pem", "path to save private key")
+	flag.IntVar(&cfg.outCertFile, "certFile", "chain.pem", "path to save public cert")
 	flag.Parse()
 }
 
@@ -124,22 +129,38 @@ func main() {
 		log.Fatalf("Failed to fetch certificates: %s", err)
 	}
 
+	var keyOutput io.Writer = os.Stdout
+	if cfg.outKeyFile != "" {
+		if keyFileWriter, err := os.Open(cfg.outKeyFile); err != nil {
+			keyOutput = keyFileWriter
+		}
+		defer certFileWriter.Close()
+	}
+
 	// output domain key and certificates in PEM format
-	if err := pem.Encode(os.Stdout, &pem.Block{
+	if err := pem.Encode(keyOutput, &pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(domainKey),
 	}); err != nil {
 		log.Fatalln(err)
 	}
 
-	if err := pem.Encode(os.Stdout, &pem.Block{
+	var certOutput io.Writer = os.Stdout
+	if cfg.outCertFile != "" {
+		if certFileWriter, err := os.Open(cfg.outCertFile); err != nil {
+			certOutput = certFileWriter
+		}
+		defer certFileWriter.Close()
+	}
+
+	if err := pem.Encode(certOutput, &pem.Block{
 		Type:  "CERTIFICATE",
 		Bytes: domainCrt.Raw,
 	}); err != nil {
 		log.Fatalln(err)
 	}
 
-	if err := pem.Encode(os.Stdout, &pem.Block{
+	if err := pem.Encode(certOutput, &pem.Block{
 		Type:  "CERTIFICATE",
 		Bytes: issuerCrt.Raw,
 	}); err != nil {
