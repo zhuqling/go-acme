@@ -36,8 +36,8 @@ func init() {
 	flag.StringVar(&cfg.Domains, "domains", "", "comma-separated list of up to 100 domain names")
 	flag.StringVar(&cfg.API, "api", LetsEncryptProduction, "ACME API URL")
 	flag.IntVar(&cfg.Bits, "bit", 2048, "domain key length")
-	flag.IntVar(&cfg.outKeyFile, "keyFile", "privateKey.pem", "path to save private key")
-	flag.IntVar(&cfg.outCertFile, "certFile", "chain.pem", "path to save public cert")
+	flag.StringVar(&cfg.outKeyFile, "keyFile", "privateKey.pem", "path to save private key")
+	flag.StringVar(&cfg.outCertFile, "certFile", "chain.pem", "path to save public cert")
 	flag.Parse()
 }
 
