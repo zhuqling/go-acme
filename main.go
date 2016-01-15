@@ -130,7 +130,7 @@ func main() {
 		log.Fatalf("Failed to fetch certificates: %s", err)
 	}
 
-	var keyOutput io.Writer = os.Stdout
+	var keyOutput = os.Stdout
 	if cfg.outKeyFile != "" {
 		keyFileWriter, err := os.OpenFile(cfg.outKeyFile, os.O_WRONLY | os.O_CREATE, 0644)
 		if err != nil {
@@ -148,7 +148,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	var certOutput io.Writer = os.Stdout
+	var certOutput = os.Stdout
 	if cfg.outCertFile != "" {
 		certFileWriter, err := os.OpenFile(cfg.outCertFile, os.O_WRONLY | os.O_CREATE, 0644)
 		if err != nil {
