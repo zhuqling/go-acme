@@ -132,13 +132,13 @@ func main() {
 
 	var keyOutput io.Writer = os.Stdout
 	if cfg.outKeyFile != "" {
-		keyFileWriter, err := os.Open(cfg.outKeyFile)
+		keyFileWriter, err := os.Open(cfg.outKeyFile, os.O_WRONLY | os.O_CREATE)
 		if err != nil {
 			log.Fatalf("Failed to read output key: %s", err)
 		}
 		keyOutput = keyFileWriter
-		defer keyFileWriter.Close()
 	}
+	defer keyOutput.Close()
 
 	// output domain key and certificates in PEM format
 	if err := pem.Encode(keyOutput, &pem.Block{
@@ -150,13 +150,13 @@ func main() {
 
 	var certOutput io.Writer = os.Stdout
 	if cfg.outCertFile != "" {
-		certFileWriter, err := os.Open(cfg.outCertFile)
+		certFileWriter, err := os.Open(cfg.outCertFile, os.O_WRONLY | os.O_CREATE)
 		if err != nil {
-			log.Fatalf("Failed to read output key: %s", err)
+			log.Fatalf("Failed to read output cert: %s", err)
 		}
 		certOutput = certFileWriter
-		defer certFileWriter.Close()
 	}
+	defer certOutput.Close()
 
 	if err := pem.Encode(certOutput, &pem.Block{
 		Type:  "CERTIFICATE",
