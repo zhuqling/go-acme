@@ -135,7 +135,7 @@ func main() {
 		if keyFileWriter, err := os.Open(cfg.outKeyFile); err != nil {
 			keyOutput = keyFileWriter
 		}
-		defer certFileWriter.Close()
+		defer keyFileWriter.Close()
 	}
 
 	// output domain key and certificates in PEM format
