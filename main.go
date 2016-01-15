@@ -132,9 +132,11 @@ func main() {
 
 	var keyOutput io.Writer = os.Stdout
 	if cfg.outKeyFile != "" {
-		if keyFileWriter, err := os.Open(cfg.outKeyFile); err != nil {
-			keyOutput = keyFileWriter
+		keyFileWriter, err := os.Open(cfg.outKeyFile)
+		if err != nil {
+			log.Fatalf("Failed to read output key: %s", err)
 		}
+		keyOutput = keyFileWriter
 		defer keyFileWriter.Close()
 	}
 
@@ -148,9 +150,11 @@ func main() {
 
 	var certOutput io.Writer = os.Stdout
 	if cfg.outCertFile != "" {
-		if certFileWriter, err := os.Open(cfg.outCertFile); err != nil {
-			certOutput = certFileWriter
+		certFileWriter, err := os.Open(cfg.outCertFile)
+		if err != nil {
+			log.Fatalf("Failed to read output key: %s", err)
 		}
+		certOutput = certFileWriter
 		defer certFileWriter.Close()
 	}
 
