@@ -45,6 +45,8 @@ openssl genrsa 4096 > account.key
 acme -addr 127.0.0.1:81 -key account.key -domains example.com,www.example.com -keyFile privateKey.pem -certFile chain.pem
 ```
 
+change nginx config in ssl server block, and restart Nginx
+
 ```nginx
 ssl_certificate      chain.pem;
 ssl_certificate_key  privateKey.pem;
